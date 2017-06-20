@@ -334,7 +334,7 @@ class UpdateEmailOptInTests(ModuleStoreTestCase):
     Test cases to cover API-driven email list opt-in update workflows
     """
     USERNAME = u'frank-underwood'
-    PASSWORD = u'ṕáśśẃőŕd'
+    PASSWORD = u'password'
     EMAIL = u'frank+underwood@example.com'
 
     @ddt.data(

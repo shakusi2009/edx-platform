@@ -33,6 +33,16 @@ class AccountUserAlreadyExists(AccountRequestError):
     pass
 
 
+class AccountUsernameAlreadyExists(AccountRequestError):
+    """User with the same username already exists. """
+    pass
+
+
+class AccountEmailAlreadyExists(AccountRequestError):
+    """User with the same email already exists. """
+    pass
+
+
 class AccountUsernameInvalid(AccountRequestError):
     """The requested username is not in a valid format. """
     pass

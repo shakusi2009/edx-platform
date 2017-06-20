@@ -35,7 +35,9 @@ from .accounts import (
     PASSWORD_MAX_LENGTH,
     PASSWORD_MIN_LENGTH,
     USERNAME_MAX_LENGTH,
-    USERNAME_MIN_LENGTH
+    USERNAME_MIN_LENGTH,
+    EMAIL_CONFLICT_MSG,
+    USERNAME_CONFLICT_MSG
 )
 from .accounts.api import check_account_exists
 from .helpers import FormDescription, require_post_params, shim_student_view
@@ -333,18 +335,8 @@ class RegistrationView(APIView):
         conflicts = check_account_exists(email=email, username=username)
         if conflicts:
             conflict_messages = {
-                "email": _(
-                    # Translators: This message is shown to users who attempt to create a new
-                    # account using an email address associated with an existing account.
-                    u"It looks like {email_address} belongs to an existing account. "
-                    u"Try again with a different email address."
-                ).format(email_address=email),
-                "username": _(
-                    # Translators: This message is shown to users who attempt to create a new
-                    # account using a username associated with an existing account.
-                    u"It looks like {username} belongs to an existing account. "
-                    u"Try again with a different username."
-                ).format(username=username),
+                "email": _(EMAIL_CONFLICT_MSG).format(email_address=email),
+                "username": _(USERNAME_CONFLICT_MSG).format(username=username),
             }
             errors = {
                 field: [{"user_message": conflict_messages[field]}]

@@ -2,6 +2,7 @@
 Account constants
 """
 
+
 # The minimum and maximum length for the name ("full name") account field
 NAME_MIN_LENGTH = 2
 NAME_MAX_LENGTH = 255
@@ -25,3 +26,13 @@ ALL_USERS_VISIBILITY = 'all_users'
 
 # Indicates the user's preference that all their account information be private.
 PRIVATE_VISIBILITY = 'private'
+
+# Translators: This message is shown to users who attempt to create a new
+# account using an email address associated with an existing account.
+EMAIL_CONFLICT_MSG = u"It looks like {email_address} belongs to an existing account. " \
+                     u"Try again with a different email address."
+
+# Translators: This message is shown to users who attempt to create a new
+# account using a username associated with an existing account.
+USERNAME_CONFLICT_MSG = u"It looks like {username} belongs to an existing account. " \
+                        u"Try again with a different username."
