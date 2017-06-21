@@ -62,24 +62,6 @@ class StudentAccountUpdateTest(CacheIsolationTestCase, UrlResetMixin):
     NEW_EMAIL = u"walt@savewalterwhite.com"
 
     INVALID_ATTEMPTS = 100
-
-    INVALID_EMAILS = [
-        None,
-        u"",
-        u"a",
-        "no_domain",
-        "no+domain",
-        "@",
-        "@domain.com",
-        "test@no_extension",
-
-        # Long email -- subtract the length of the @domain
-        # except for one character (so we exceed the max length limit)
-        u"{user}@example.com".format(
-            user=(u'e' * (EMAIL_MAX_LENGTH - 11))
-        )
-    ]
-
     INVALID_KEY = u"123abc"
 
     URLCONF_MODULES = ['student_accounts.urls']

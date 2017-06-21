@@ -754,7 +754,6 @@ def _validate_email_satisfies_max_length(email):
         )
 
 
-
 def _validate_email_doesnt_exist(email):
     """Validate that the email is not associated with an existing user.
 
@@ -783,10 +782,6 @@ def _validate_password(password, username=None):
         AccountPasswordInvalid
 
     """
-    try:
-        _validate_unicode(password)
-    except UnicodeError as invalid_unicode_err:
-        raise AccountPasswordInvalid(str(invalid_unicode_err))
     _validate_password_type(password)
     _validate_password_of_good_length(password)
     _validate_password_works_with_username(password, username)

@@ -26,10 +26,8 @@ class RegistrationValidationViewTests(test_utils.ApiTestCase):
     Tests for validity of user data in registration forms.
     """
 
-    def setUp(self):
-        super(RegistrationValidationViewTests, self).setUp()
-        self.endpoint_name = 'registration_validation'
-        self.path = reverse(self.endpoint_name)
+    endpoint_name = 'registration_validation'
+    path = reverse(endpoint_name)
 
     def get_validation_decision(self, data):
         response = self.client.get(self.path, data)
@@ -110,7 +108,7 @@ class RegistrationValidationViewTests(test_utils.ApiTestCase):
         })
 
     def test_email_more_than_max_length_validation_decision(self):
-        email = ('e'*EMAIL_MAX_LENGTH) + '@email.com'
+        email = ('e' * EMAIL_MAX_LENGTH) + '@email.com'
         validation_decisions = self.get_validation_decision({
             'email': email
         })
@@ -128,7 +126,7 @@ class RegistrationValidationViewTests(test_utils.ApiTestCase):
         })
 
     def test_username_less_than_min_length_validation_decision(self):
-        username = 'u'*(USERNAME_MIN_LENGTH - 1)
+        username = 'u' * (USERNAME_MIN_LENGTH - 1)
         validation_decisions = self.get_validation_decision({
             'username': username
         })
@@ -140,7 +138,7 @@ class RegistrationValidationViewTests(test_utils.ApiTestCase):
         })
 
     def test_username_more_than_max_length_validation_decision(self):
-        username = 'u'*(USERNAME_MAX_LENGTH + 1)
+        username = 'u' * (USERNAME_MAX_LENGTH + 1)
         validation_decisions = self.get_validation_decision({
             'username': username
         })
@@ -163,7 +161,7 @@ class RegistrationValidationViewTests(test_utils.ApiTestCase):
         })
 
     def test_password_less_than_min_length_validation_decision(self):
-        password = 'p'*(PASSWORD_MIN_LENGTH - 1)
+        password = 'p' * (PASSWORD_MIN_LENGTH - 1)
         validation_decisions = self.get_validation_decision({
             "password": password
         })
@@ -172,7 +170,7 @@ class RegistrationValidationViewTests(test_utils.ApiTestCase):
         })
 
     def test_password_more_than_max_length_validation_decision(self):
-        password = 'p'*(PASSWORD_MAX_LENGTH + 1)
+        password = 'p' * (PASSWORD_MAX_LENGTH + 1)
         validation_decisions = self.get_validation_decision({
             "password": password
         })

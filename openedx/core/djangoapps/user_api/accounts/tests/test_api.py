@@ -258,7 +258,7 @@ class AccountSettingsOnCreationTest(TestCase):
     # pylint: disable=missing-docstring
 
     USERNAME = u'frank-underwood'
-    PASSWORD = u'password'
+    PASSWORD = u'ṕáśśẃőŕd'
     EMAIL = u'frank+underwood@example.com'
 
     def test_create_account(self):
@@ -307,7 +307,7 @@ class AccountCreationActivationAndPasswordChangeTest(TestCase):
     Test cases to cover the account initialization workflow
     """
     USERNAME = u'frank-underwood'
-    PASSWORD = u'password'
+    PASSWORD = u'ṕáśśẃőŕd'
     EMAIL = u'frank+underwood@example.com'
 
     ORIG_HOST = 'example.com'
