@@ -341,6 +341,8 @@ class CourseModeViewTest(CatalogIntegrationMixin, UrlResetMixin, ModuleStoreTest
     )
     @ddt.unpack
     def test_choose_mode_redirect(self, course_mode, expected_redirect):
+        self.mock_enterprise_learner_api()
+        self.mock_enterprise_course_enrollment_get_api()
         # Create the course modes
         for mode in ('audit', 'honor', 'verified'):
             min_price = 0 if mode in ["honor", "audit"] else 1
@@ -364,6 +366,8 @@ class CourseModeViewTest(CatalogIntegrationMixin, UrlResetMixin, ModuleStoreTest
         self.assertRedirects(response, redirect_url)
 
     def test_choose_mode_audit_enroll_on_post(self):
+        self.mock_enterprise_learner_api()
+        self.mock_enterprise_course_enrollment_get_api()
         audit_mode = 'audit'
         # Create the course modes
         for mode in (audit_mode, 'verified'):
@@ -399,6 +403,8 @@ class CourseModeViewTest(CatalogIntegrationMixin, UrlResetMixin, ModuleStoreTest
         self.assertTrue(is_active)
 
     def test_remember_donation_for_course(self):
+        self.mock_enterprise_learner_api()
+        self.mock_enterprise_course_enrollment_get_api()
         # Create the course modes
         CourseModeFactory.create(mode_slug='honor', course_id=self.course.id)
         CourseModeFactory.create(mode_slug='verified', course_id=self.course.id, min_price=1)
@@ -416,6 +422,8 @@ class CourseModeViewTest(CatalogIntegrationMixin, UrlResetMixin, ModuleStoreTest
         self.assertEqual(actual_amount, expected_amount)
 
     def test_successful_default_enrollment(self):
+        self.mock_enterprise_learner_api()
+        self.mock_enterprise_course_enrollment_get_api()
         # Create the course modes
         for mode in (CourseMode.DEFAULT_MODE_SLUG, 'verified'):
             CourseModeFactory.create(mode_slug=mode, course_id=self.course.id)
@@ -438,6 +446,8 @@ class CourseModeViewTest(CatalogIntegrationMixin, UrlResetMixin, ModuleStoreTest
         self.assertEqual(is_active, True)
 
     def test_unsupported_enrollment_mode_failure(self):
+self.mock_enterprise_learner_api()
+        self.mock_enterprise_course_enrollment_get_api()
         # Create the supported course modes
         for mode in ('honor', 'verified'):
             CourseModeFactory.create(mode_slug=mode, course_id=self.course.id)

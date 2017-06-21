@@ -58,6 +58,31 @@ class EnterpriseApiClient(object):
             jwt=jwt
         )
 
+    def get_enterprise_course_enrollment(self, ec_user_id, course_id):
+        params = {
+            'enterprise_customer_user': ec_user_id,
+            'course_id': course_id,
+        }
+        try:
+            response = getattr(self.client, 'enterprise-course-enrollment').get(**params)
+        except (HttpClientError, HttpServerError):
+            message = (
+                "An error occured while getting EnterpriseCourseEnrollment for EnterpriseCustomerUser with "
+                "ID {ec_user_id} and course run {course_id}."
+            ).format(
+                username=username,
+                course_id=course_id,
+                consent_granted=consent_granted,
+            )
+            LOGGER.exception(message)
+            raise EnterpriseApiException(message)
+        else:
+            if response.get('results'):
+                return response['results'][0]
+            else:
+                return None
+
+
     def post_enterprise_course_enrollment(self, username, course_id, consent_granted):
         """
         Create an EnterpriseCourseEnrollment by using the corresponding serializer (for validation).
@@ -268,7 +293,7 @@ def consent_needed_for_course(user, course_id):
     return consent_necessary_for_course(user, course_id)
 
 
-def get_enterprise_consent_url(request, course_id, user=None, return_to=None):
+def get_enterprise_consent_url(request, course_id, user=None, return_to=None, return_to_url=None):
     """
     Build a URL to redirect the user to the Enterprise app to provide data sharing
     consent for a specific course ID.
@@ -287,7 +312,7 @@ def get_enterprise_consent_url(request, course_id, user=None, return_to=None):
         return None
 
     if return_to is None:
-        return_path = request.path
+        return_path = return_to_url or request.path
     else:
         return_path = reverse(return_to, args=(course_id,))
 

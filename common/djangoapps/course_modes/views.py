@@ -241,18 +241,36 @@ class ChooseModeView(View):
         allowed_modes = CourseMode.modes_for_course_dict(course_key)
         if requested_mode not in allowed_modes:
             return HttpResponseBadRequest(_("Enrollment mode not supported"))
-
-        if requested_mode == 'audit':
+        if requested_mode in {'audit', 'honor'}:
             # If the learner has arrived at this screen via the traditional enrollment workflow,
             # then they should already be enrolled in an audit mode for the course, assuming one has
             # been configured.  However, alternative enrollment workflows have been introduced into the
             # system, such as third-party discovery.  These workflows result in learners arriving
             # directly at this screen, and they will not necessarily be pre-enrolled in the audit mode.
-            CourseEnrollment.enroll(request.user, course_key, CourseMode.AUDIT)
-            return redirect(reverse('dashboard'))
-
-        if requested_mode == 'honor':
             CourseEnrollment.enroll(user, course_key, mode=requested_mode)
+            enterprise_learner_data = enterprise_api.get_enterprise_learner_data(site=request.site, user=user)
+
+            if enterprise_learner_data:
+                enterprise_learner = enterprise_learner_data[0]
+                is_course_in_enterprise_catalog = enterprise_api.is_course_in_enterprise_catalog(
+                    site=request.site,
+                    course_id=course_id,
+                    enterprise_catalog_id=enterprise_learner['enterprise_customer']['catalog']
+                )
+
+                if is_course_in_enterprise_catalog:
+                    client = enterprise_api.EnterpriseApiClient()
+                    if not client.get_enterprise_course_enrollment(enterprise_learner['id'], course_id):
+                        client.post_enterprise_course_enrollment(user.username, course_id, None)
+                    consent_url = enterprise_api.get_enterprise_consent_url(
+                        request,
+                        course_id,
+                        user=user,
+                        return_to_url=reverse('dashboard')
+                    )
+                    if consent_url:
+                        return redirect(consent_url)
+
             return redirect(reverse('dashboard'))
 
         mode_info = allowed_modes[requested_mode]
