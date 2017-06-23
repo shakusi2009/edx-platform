@@ -1,3 +1,8 @@
+"""
+A set of built-in default checks for the platform heartbeat endpoint
+
+Other checks should be included in their respective modules/djangoapps
+"""
 from datetime import datetime, timedelta
 from time import sleep, time
 
