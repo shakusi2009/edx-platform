@@ -81,3 +81,11 @@ SUBSECTION_SCORE_CHANGED = Signal(
         'subsection_grade',  # SubsectionGrade object
     ]
 )
+
+# Signal that indicates that a user has passed a course.
+LEARNER_COURSE_PASSING_GRADE = Signal(
+    providing_args=[
+        'user', # user object
+        'course_key',  # course.id
+    ]
+)

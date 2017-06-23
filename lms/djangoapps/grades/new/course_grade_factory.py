@@ -2,7 +2,7 @@ from collections import namedtuple
 from logging import getLogger
 
 import dogstats_wrapper as dog_stats_api
-from openedx.core.djangoapps.signals.signals import COURSE_GRADE_CHANGED
+from openedx.core.djangoapps.signals.signals import COURSE_GRADE_CHANGED, LEARNER_COURSE_PASSING_GRADE
 
 from ..config import assume_zero_if_absent, should_persist_grades
 from ..config.waffle import WRITE_ONLY_IF_ENGAGED, waffle
@@ -157,7 +157,8 @@ class CourseGradeFactory(object):
         """
         Computes, saves, and returns a CourseGrade object for the
         given user and course.
-        Sends a COURSE_GRADE_CHANGED signal to listeners.
+        Sends a COURSE_GRADE_CHANGED signal to listeners and a
+        LEARNER_COURSE_PASSING_GRADE if learner has passed course.
         """
         course_grade = CourseGrade(user, course_data)
         course_grade.update()
@@ -187,6 +188,12 @@ class CourseGradeFactory(object):
             course_key=course_data.course_key,
             deadline=course_data.course.end,
         )
+        if course_grade.passed is True:
+            LEARNER_COURSE_PASSING_GRADE.send_robust(
+                sender=CourseGradeFactory,
+                user=user,
+                course_key=course_data.course_key,
+            )
 
         log.info(
             u'Grades: Update, %s, User: %s, %s, persisted: %s',
