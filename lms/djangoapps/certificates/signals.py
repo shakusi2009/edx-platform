@@ -19,20 +19,20 @@ log = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=CertificateWhitelist, dispatch_uid="append_certificate_whitelist")
-def _listen_for_certificate_whitelist_append(sender, instance, **kwargs, ):  # pylint: disable=unused-argument
-    switches =  waffle.waffle()
+def _listen_for_certificate_whitelist_append(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    switches = waffle.waffle()
     # All flags enabled
     if not switches.is_enabled(waffle.SELF_PACED_ONLY) and \
-            not waffle.waffle().is_enabled(waffle.INSTRUCTOR_PACED_ONLY):
+            not switches.is_enabled(waffle.INSTRUCTOR_PACED_ONLY):
         return
 
     # Only SELF_PACED_ONLY flag enabled
-    if not waffle.waffle().is_enabled(waffle.INSTRUCTOR_PACED_ONLY):
+    if not switches.is_enabled(waffle.INSTRUCTOR_PACED_ONLY):
         if not courses.get_course_by_id(instance.course_id, depth=0).self_paced:
             return
 
     # Only INSTRUCTOR_PACED_ONLY flag enabled
-    elif not waffle.waffle().is_enabled(waffle.SELF_PACED_ONLY):
+    elif not switches.is_enabled(waffle.SELF_PACED_ONLY):
         if courses.get_course_by_id(instance.course_id, depth=0).self_paced:
             return
 

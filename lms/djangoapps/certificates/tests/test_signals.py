@@ -71,32 +71,32 @@ class WhitelistGeneratedCertificatesTest(ModuleStoreTestCase):
                 )
                 mock_generate_certificate_apply_async.assert_not_called(
                     student=self.user,
-                    course_key=self.course.id,
+                    course_key=self.course.id
                 )
             with waffle.waffle().override(waffle.SELF_PACED_ONLY, active=True):
                 CertificateWhitelist.objects.create(
                     user=self.user,
                     course_id=self.course.id
                 )
-                mock_generate_certificate_apply_async.assert_called_once_with(
+                mock_generate_certificate_apply_async.assert_called_with(
                     student=self.user,
                     course_key=self.course.id,
                 )
             with waffle.waffle().override(waffle.INSTRUCTOR_PACED_ONLY, active=False):
                 CertificateWhitelist.objects.create(
                     user=self.user,
-                    course_id=self.ip_course
+                    course_id=self.ip_course.id
                 )
                 mock_generate_certificate_apply_async.assert_not_called(
                     student=self.user,
-                    course_key=self.course.id,
+                    course_key=self.ip_course.id
                 )
             with waffle.waffle().override(waffle.INSTRUCTOR_PACED_ONLY, active=True):
                 CertificateWhitelist.objects.create(
                     user=self.user,
-                    course_id=self.course.id
+                    course_id=self.ip_course.id
                 )
-                mock_generate_certificate_apply_async.assert_called_once_with(
+                mock_generate_certificate_apply_async.assert_called_with(
                     student=self.user,
-                    course_key=self.ip_course,
+                    course_key=self.ip_course.id
                 )
