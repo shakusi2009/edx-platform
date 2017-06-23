@@ -124,7 +124,7 @@ define(['jquery', 'underscore', 'gettext', 'js/views/baseview', 'common/js/compo
             onSync: function(model) {
                 if (ViewUtils.hasChangedAttributes(model, [
                     'has_changes', 'published', 'edited_on', 'edited_by', 'visibility_state',
-                    'has_explicit_staff_lock', 'has_partition_group_components'
+                    'has_explicit_staff_lock'
                 ])) {
                     this.render();
                 }
@@ -150,7 +150,6 @@ define(['jquery', 'underscore', 'gettext', 'js/views/baseview', 'common/js/compo
                             releaseDateFrom: this.model.get('release_date_from'),
                             hasExplicitStaffLock: this.model.get('has_explicit_staff_lock'),
                             staffLockFrom: this.model.get('staff_lock_from'),
-                            hasPartitionGroupComponents: this.model.get('has_partition_group_components'),
                             course: window.course,
                             HtmlUtils: HtmlUtils
                         })
