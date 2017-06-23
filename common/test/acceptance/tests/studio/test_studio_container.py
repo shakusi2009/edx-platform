@@ -16,6 +16,7 @@ from common.test.acceptance.pages.lms.create_mode import ModeCreationPage
 from common.test.acceptance.pages.lms.staff_view import StaffCoursewarePage
 from common.test.acceptance.pages.studio.component_editor import ComponentEditorView, ComponentVisibilityEditorView
 from common.test.acceptance.pages.studio.container import ContainerPage
+from common.test.acceptance.pages.studio.overview import CourseOutlineItem
 from common.test.acceptance.pages.studio.html_component_editor import HtmlComponentEditorView
 from common.test.acceptance.pages.studio.move_xblock import MoveModalView
 from common.test.acceptance.pages.studio.utils import add_discussion, drag
@@ -456,6 +457,59 @@ class BaseGroupConfigurationsTest(ContainerBase):
         self.assertNotIn(self.MISSING_GROUP_LABEL, [item.text for item in visibility_editor.all_group_options])
         visibility_editor.cancel()
         self.assertFalse(component.has_validation_error)
+
+
+class UnitAccessContainerTest(BaseGroupConfigurationsTest):
+    GROUP_RESTRICTED_MESSAGE = 'Access to this unit is restricted to: Dogs'
+
+    def _toggle_container_unit_access(self, group_ids, unit):
+        """
+        Toggle the unit level access on the course outline page
+        """
+        unit.toggle_unit_access('Content Groups', group_ids)
+
+    def _verify_container_unit_access_message(self, group_ids, expected_message):
+        """
+        Check that the container page displays the correct unit
+        access message.
+        """
+        self.outline.visit()
+        self.outline.expand_all_subsections()
+        unit = self.outline.section_at(0).subsection_at(0).unit_at(0)
+        self._toggle_container_unit_access(group_ids, unit)
+
+        container_page = self.go_to_unit_page()
+        self.assertEqual(container_page.get_xblock_access_message(), expected_message)
+
+    def test_default_selection(self):
+        """
+        Tests that no message is displayed when there are no
+        restrictions on the unit or components.
+        """
+        self._verify_container_unit_access_message([], '')
+
+    def test_restricted_components_message(self):
+        """
+        Test that the proper message is displayed when access to
+        some components is restricted.
+        """
+        container_page = self.go_to_unit_page()
+        html_component = container_page.xblocks[1]
+
+        # Initially set visibility to Dog group.
+        self.update_component(
+            self.html_component,
+            {'group_access': {self.id_base: [self.id_base + 1]}}
+        )
+
+        self._verify_container_unit_access_message([], self.GROUP_VISIBILITY_MESSAGE)
+
+    def test_restricted_access_message(self):
+        """
+        Test that the proper message is displayed when access to the
+        unit is restricted to a particular group.
+        """
+        self._verify_container_unit_access_message([self.id_base + 1], self.GROUP_RESTRICTED_MESSAGE)
 
 
 @attr(shard=3)
