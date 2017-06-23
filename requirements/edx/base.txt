@@ -35,7 +35,7 @@ django-statici18n==1.1.5
 django-storages==1.4.1
 django-method-override==0.1.0
 django-user-tasks==0.1.4
-djangorestframework==3.6.3
+git+https://github.com/edx/django-rest-framework.git@8ba2eb1778f8fa852fa6c400bed82169a46a0ab1#egg=djangorestframework==0.0
 django==1.8.18
 django-waffle==0.11.1
 djangorestframework-jwt==1.8.0
