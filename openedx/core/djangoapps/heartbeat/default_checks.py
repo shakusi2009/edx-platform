@@ -22,6 +22,12 @@ from .tasks import sample_task
 # Modulestore
 
 def check_modulestore():
+    """ Check the modulestore connection
+
+    Returns:
+        unicode: A unicode string of either "OK" or the failure message
+
+    """
     # This refactoring merely delegates to the default modulestore (which if it's mixed modulestore will
     # delegate to all configured modulestores) and a quick test of sql. A later refactoring may allow
     # any service to register itself as participating in the heartbeat. It's important that all implementation
@@ -35,6 +41,12 @@ def check_modulestore():
 
 
 def check_database():
+    """ Check the database connection by attempting a no-op query
+
+    Returns:
+        unicode: A unicode string of either "OK" or the failure message
+
+    """
     cursor = connection.cursor()
     try:
         cursor.execute("SELECT CURRENT_DATE")
@@ -50,6 +62,12 @@ CACHE_VALUE = 'abc123'
 
 
 def check_cache_set():
+    """ Check setting a cache value
+
+    Returns:
+        unicode: A unicode string of either "OK" or the failure message
+
+    """
     try:
         cache.set(CACHE_KEY, CACHE_VALUE, 30)
         return 'cache_set', True, u'OK'
@@ -58,6 +76,12 @@ def check_cache_set():
 
 
 def check_cache_get():
+    """ Check getting a cache value
+
+    Returns:
+        unicode: A unicode string of either "OK" or the failure message
+
+    """
     try:
         data = cache.get(CACHE_KEY)
         if data == CACHE_VALUE:
@@ -70,6 +94,12 @@ def check_cache_get():
 
 # Celery
 def check_celery():
+    """ Check running a simple asynchronous celery task
+
+    Returns:
+        unicode: A unicode string of either "OK" or the failure message
+
+    """
     now = time()
     datetimenow = datetime.now()
     expires = datetimenow + timedelta(seconds=getattr(settings, 'HEARTBEAT_CELERY_TIMEOUT', HEARTBEAT_CELERY_TIMEOUT))
