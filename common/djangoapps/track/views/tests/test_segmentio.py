@@ -310,6 +310,29 @@ class SegmentIOTrackingTestCase(EventTrackingTestCase):
         self.assertEquals(response.status_code, 200)
         self.assert_no_events_emitted()
 
+    def test_forum_thread_viewed_event(self):
+        """
+        Tests that a SegmentIO forum thread viewed event is accepted and transformed.
+
+        Only tests that the transformation happens at all; does not comprehensively
+        test that it happens correctly. The test for correctness is in:
+        lms.djangoapps.django_comment_client.tests.test_event_transformers
+        """
+        middleware = TrackMiddleware()
+        event_data = {'title': 'Test Title'}
+        request = self.create_request(
+            data=self.create_segmentio_event_json(name='edx.forum.thread.viewed', data=event_data),
+            content_type='application/json'
+        )
+        middleware.process_request(request)
+        try:
+            response = segmentio.segmentio_event(request)
+            self.assertEquals(response.status_code, 200)
+        finally:
+            middleware.process_response(request, None)
+        actual_event_data = self.get_event()['event']
+        self.assertIn('title_truncated', actual_event_data)
+
     @data(
         ('edx.video.played', 'play_video'),
         ('edx.video.paused', 'pause_video'),

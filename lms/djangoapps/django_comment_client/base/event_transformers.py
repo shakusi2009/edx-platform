@@ -2,7 +2,7 @@
 Transformers for Discussion-related events.
 """
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
 
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.locator import CourseLocator
@@ -30,17 +30,17 @@ class ForumThreadViewedEventTransformer(EventTransformer):
         Transform incoming events.
 
         For events from mobile, enhance with fields that are not available
-        within the apps, and remove unncessary fields.
+        within the apps.
 
         Pass-through other events.
         """
 
         # Do not transform non-mobile events; they should already have all the correct fields
-        if self['event_source'] != 'mobile':
+        if self.get('event_source') != 'mobile':
             return
 
         # Parse out course key; extract topic and thread IDs
-        course_id_string = self.event.get('course_id')
+        course_id_string = self['context'].get('course_id') if 'context' in self else None
         course_id = None
         if course_id_string:
             try:
@@ -73,10 +73,14 @@ class ForumThreadViewedEventTransformer(EventTransformer):
                 'discussion_id': commentable_id,
                 'thread_id': thread_id
             }
-            self.event['url'] = reverse('single_thread', kwargs=url_kwargs)
+            try:
+                self.event['url'] = reverse('single_thread', kwargs=url_kwargs)
+            except NoReverseMatch:
+                pass
 
         # Add truncated title
-        add_truncated_title_to_event_data(self.event, self.event.get('title'))
+        if 'title' in self.event:
+            add_truncated_title_to_event_data(self.event, self.event['title'])
 
         # Add user's forum and course roles
         if course_id and user:
@@ -91,9 +95,3 @@ class ForumThreadViewedEventTransformer(EventTransformer):
         if commentable_id:
             add_team_id_to_event_data(self.event, commentable_id)
 
-        # Remove course ID field.
-        # It is in the mobile event data because it is necessary in order to calculate the
-        # user_forum_roles and user_course_roles fields; however, it is not required in
-        # the final event.
-        if 'course_id' in self.event:
-            del self.event['course_id']
