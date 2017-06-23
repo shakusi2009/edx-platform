@@ -704,7 +704,6 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                 groupAccess[userPartitionId] = this.getSelectedCheckboxesByDivId(userPartitionId);
                 return groupAccess;
             } else {
-                console.log ('else reached');
                 return {};
             }
         },
