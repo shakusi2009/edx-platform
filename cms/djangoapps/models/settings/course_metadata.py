@@ -106,8 +106,8 @@ class CourseMetadata(object):
         # TODO: Alex Dusenbery 2017-06-22
         # Before we roll out the auto-certs feature, move this to a good, shared
         # place such that we're not repeating code found in LMS.
-        certificate_switches = WaffleSwitchNamespace(name=u'certificates', log_prefix=u'Certificates: ')
-        if not certificate_switches.is_enabled(u'self_paced_only'):
+        switches = WaffleSwitchNamespace(name=u'certificates', log_prefix=u'Certificates: ')
+        if not (switches.is_enabled(u'self_paced_only') or switches.is_enabled(u'instructor_paced_only')):
             filtered_list.append('certificate_available_date')
 
         return filtered_list
