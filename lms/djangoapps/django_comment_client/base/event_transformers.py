@@ -8,8 +8,10 @@ from opaque_keys import InvalidKeyError
 from opaque_keys.edx.locator import CourseLocator
 
 from django_comment_client.utils import get_cached_discussion_id_map_by_course_id
-from django_comment_client.base.views import add_truncated_title_to_event_data
-from teams.models import CourseTeam
+from django_comment_client.base.views import (
+    add_truncated_title_to_event_data,
+    add_team_id_to_event_data
+)
 from track.transformers import EventTransformer, EventTransformerRegistry
 
 
@@ -87,16 +89,11 @@ class ForumThreadViewedEventTransformer(EventTransformer):
 
         # Add team ID
         if commentable_id:
-            try:
-                team = CourseTeam.objects.get(discussion_topic_id=commentable_id)
-                self.event['team_id'] = team.team_id
-            except CourseTeam.DoesNotExist:
-                pass
+            add_team_id_to_event_data(self.event, commentable_id)
 
         # Remove course ID field.
         # It is in the mobile event data because it is necessary in order to calculate the
         # user_forum_roles and user_course_roles fields; however, it is not required in
         # the final event.
-        it is not needed in the final event.
         if 'course_id' in self.event:
             del self.event['course_id']

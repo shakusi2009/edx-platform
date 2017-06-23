@@ -45,6 +45,7 @@ from django_comment_common.signals import (
 from django_comment_common.utils import ThreadContext
 from eventtracking import tracker
 from lms.djangoapps.courseware.exceptions import CourseAccessRedirect
+from lms.djangoapps.teams.models import CourseTeam
 from util.file import store_uploaded_file
 
 log = logging.getLogger(__name__)
@@ -102,6 +103,15 @@ def add_truncated_title_to_event_data(event_data, full_title): # pylint: disable
     else:
         event_data['title_truncated'] = False
         event_data['title'] = None
+
+
+def add_team_id_to_event_data(event_data, commentable_id):
+    try:
+        team = CourseTeam.objects.get(discussion_topic_id=commentable_id)
+        self.event['team_id'] = team.team_id
+    except CourseTeam.DoesNotExist:
+        pass
+
 
 
 def track_thread_created_event(request, course, thread, followed):
